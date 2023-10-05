@@ -1,5 +1,10 @@
 from team import Team
-from teams import equipeAgua, equipeAr, equipeCasteloBruxo, equipeFogo, equipePDC, equipeTerra
+from teams.agua import equipeAgua
+from teams.ar import equipeAr
+from teams.fogo import equipeFogo
+from teams.terra import equipeTerra
+from teams.pdc import equipePDC
+from teams.castelobruxo import equipeCasteloBruxo
 from utils import simulate_game, select_team
 
 teamAgua = Team(equipeAgua['nome'], equipeAgua['equipe'], equipeAgua['torcida'])

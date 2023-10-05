@@ -7,4 +7,4 @@ Game logs right now are in Brazilian Portuguese (pt-br)
 - `python main.py`
 
 ## Editing teams
-- You can modify the name and modifiers of players in each team changing the values in the teams.py file
+- You can modify the name and modifiers of players in each team changing the values in the teams folder file of the team

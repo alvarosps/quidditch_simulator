@@ -8,3 +8,6 @@ Game logs right now are in Brazilian Portuguese (pt-br)
 
 ## Editing teams
 - You can modify the name and modifiers of players in each team changing the values in the teams folder file of the team
+
+## TTRPG Rules
+- You can checkout the TTRPG rules in the "Witchcraft and Wizardry Revamped.pdf" file

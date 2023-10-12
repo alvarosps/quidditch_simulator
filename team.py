@@ -39,9 +39,16 @@ class Team:
         self.seeker_has_priority = False
         self.seeker_bonus = 0
         self.snitch_caugth = False
+        self.score_last_turn = 0
 
     def set_initial_score(self, initial_score):
         self.score = initial_score
+    
+    def set_crowd_bonus_next_round(self, initial_crowd_bonus):
+        self.crowd_bonus_next_round = initial_crowd_bonus
+    
+    def set_players_remaining(self, initial_players_remaining):
+        self.players_remaining = initial_players_remaining
 
     def set_opponent(self, opponent):
         self.opponent = opponent
@@ -82,6 +89,8 @@ class Team:
             is_game_over = self.handle_keeper(total)
         elif player_type == APANHADOR:
             is_game_over = self.handle_seeker(total)
+        self.score_last_turn = self.score
+        print(f"Bonus atuais da equipe {self.name}: {self.crowd_bonus_next_round}")
         return is_game_over
     
     def handle_chasers(self, total):
@@ -136,31 +145,35 @@ class Team:
         return False
 
     def handle_keeper(self, total):
+        print(f"\tGoleiro {self.players[GOLEIRO]['nome']} rolou {total}")
         if total >= GREATER_SUCCESS_MIN_ROLL:
-            self.score += 10
-            if self.opponent.score >= 20:
-                self.opponent.score -= 20
-            else:
-                self.opponent.score = 0
+            if self.opponent.score - 30 >= self.opponent.score_last_turn:
+                if self.opponent.score >= 30:
+                    self.opponent.score -= 30
+                else:
+                    self.opponent.score = 0
         elif total >= SUCCESS_MIN_ROLL:
-            self.score += 10
-            if self.opponent.score > 0:
-                self.opponent.score -= 10
-            else:
-                self.opponent.score = 0
+            if self.opponent.score - 20 >= self.opponent.score_last_turn:
+                if self.opponent.score >= 20:
+                    self.opponent.score -= 20
+                else:
+                    self.opponent.score = 0
         elif total >= PARTIAL_SUCCESS_MIN_ROLL:
-            if self.opponent.score > 0:
-                self.opponent.score -= 10
-            else:
-                self.opponent.score = 0
+            if self.opponent.score - 10 >= self.opponent.score_last_turn:
+                if self.opponent.score >= 10:
+                    self.opponent.score -= 10
+                else:
+                    self.opponent.score = 0
         else:
             self.opponent.score += 10
         return False
 
     def handle_seeker(self, total):
+        print(f"\tApanhador {self.players[APANHADOR]['nome']} rolou {total}")
         if not self.snitch_spotted:
             if total >= SUCCESS_MIN_ROLL:
                 self.snitch_spotted = True
+                self.opponent.snitch_spotted = True
                 print(f"\tA equipe {self.name} visualizou o pomo de ouro!")
                 self.seeker_has_priority = True
         else:
@@ -205,24 +218,23 @@ class Team:
 
     def knock_out(self, player_type):
         if self.players_remaining[player_type] > 0:
-            # self.players[player_type] = max(0, self.players[player_type] - 1)
             if player_type == ARTILHEIROS:
                 # select which random chaser will be knocked out
                 random_idx = random.randint(0, len(self.players[ARTILHEIROS]) - 1)
                 print(f"\t\tArtilheiro {self.players[ARTILHEIROS][random_idx]['nome']} foi derrubado")
                 removed_player = self.players[ARTILHEIROS].pop(random_idx)
                 if len(self.reservas[ARTILHEIROS]) > 0:
-                    print(f"\t\tArtilheiro {self.reservas[ARTILHEIROS][0]['nome']} vai entrar!")
+                    print(f"\t\t\tArtilheiro {self.reservas[ARTILHEIROS][0]['nome']} vai entrar!")
                     new_player = self.reservas[ARTILHEIROS].pop(0)
                     self.players[ARTILHEIROS].append(new_player)
                 else:
-                    print(f"\t\tNão tem mais artilheiros da {self.name} na reserva!")
+                    print(f"\t\t\tNão tem mais artilheiros da {self.name} na reserva!")
             elif player_type == BATEDORES:
                 random_idx = random.randint(0, len(self.players[BATEDORES]) - 1)
                 print(f"\t\tBatedor {self.players[BATEDORES][random_idx]['nome']} foi derrubado")
                 removed_player = self.players[BATEDORES].pop(random_idx)
                 if len(self.reservas[BATEDORES]) > 0:
-                    print(f"\t\tBatedor {self.reservas[BATEDORES][0]['nome']} vai entrar!")
+                    print(f"\t\t\tBatedor {self.reservas[BATEDORES][0]['nome']} vai entrar!")
                     new_player = self.reservas[BATEDORES].pop(0)
                     self.players[BATEDORES].append(new_player)
                 else:
@@ -231,7 +243,7 @@ class Team:
                 print(f"\t\t{player_type} {self.players[player_type]['nome']} foi derrubado!")
                 self.players[player_type] = None
                 if len(self.reservas[player_type]) > 0:
-                    print(f"\t\t{self.reservas[player_type][0]['nome']} vai entrar!")
+                    print(f"\t\t\t{self.reservas[player_type][0]['nome']} vai entrar!")
                     new_player = self.reservas[player_type].pop(0)
                     self.players[player_type] = new_player
                 else:

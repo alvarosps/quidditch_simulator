@@ -4,11 +4,10 @@ def roll_dice(n=2, sides=6):
     return sum(random.randint(1, sides) for _ in range(n))
 
 
-def simulate_game(team1, team2, automate_game):
+def simulate_game(team1, team2, rodada, automate_game):
     team1.set_opponent(team2)
     team2.set_opponent(team1)
 
-    rodada = 1
     while True:
         print("------------------------------------------------------------------------")
         print(f"RODADA {rodada}")
